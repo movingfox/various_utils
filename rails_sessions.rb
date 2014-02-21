@@ -1,3 +1,7 @@
+# rails runner script that decrypts rails' 4 sessions
+# use: rails runner rails_sessions.rb _session_cookie_here
+
+
 class RailsSession
   def self.get_session
     message = CGI.unescape(ARGV[0])
