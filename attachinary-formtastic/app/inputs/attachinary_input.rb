@@ -25,10 +25,6 @@ class AttachinaryInput
 
     cloudinary_params = Cloudinary::Uploader.build_upload_params(options[:cloudinary])
     cloudinary_params[:callback] = "http://localhost:3000/attachinary/cors"
-    puts "AAAAAAAAAAAAAAAAAAAAA"
-    puts cloudinary_params
-    puts "AAAAAAAAAAAAAAAAAAAAA"
-    puts api_secret
     cloudinary_params[:signature] = Cloudinary::Utils.api_sign_request(cloudinary_params, api_secret)
     cloudinary_params[:api_key] = api_key
     data_form_data = cloudinary_params.reject{ |k, v| v.blank? }.to_json
