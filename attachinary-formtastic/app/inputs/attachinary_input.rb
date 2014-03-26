@@ -6,7 +6,11 @@ class AttachinaryInput
     options[:html] = {}
     options[:html][:accept]= "image/jpeg,image/png,image/gif"
     options[:html][:class] = "attachinary-input"
-    data_attachinary = @model_options.to_json
+    model_options = {}
+    model_options[:files] = @files
+
+    data_attachinary = (@model_options.merge(model_options)).to_json
+    options[:html][:multiple] = true unless @model_options[:single]
     options[:html]["data-attachinary"] = data_attachinary
 
     options[:cloudinary] ||= {}
@@ -21,6 +25,10 @@ class AttachinaryInput
 
     cloudinary_params = Cloudinary::Uploader.build_upload_params(options[:cloudinary])
     cloudinary_params[:callback] = "http://localhost:3000/attachinary/cors"
+    puts "AAAAAAAAAAAAAAAAAAAAA"
+    puts cloudinary_params
+    puts "AAAAAAAAAAAAAAAAAAAAA"
+    puts api_secret
     cloudinary_params[:signature] = Cloudinary::Utils.api_sign_request(cloudinary_params, api_secret)
     cloudinary_params[:api_key] = api_key
     data_form_data = cloudinary_params.reject{ |k, v| v.blank? }.to_json
@@ -33,7 +41,7 @@ class AttachinaryInput
 
   def to_html
     @model_options = self.object.send("#{method}_metadata")
+    @files = [self.object.send(method)].compact.flatten
     builder.file_field(method, input_html_options)
   end
 end
-
