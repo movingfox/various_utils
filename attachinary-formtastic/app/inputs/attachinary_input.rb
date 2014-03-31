@@ -4,7 +4,7 @@ class AttachinaryInput
   def input_html_options
     options = {}
     options[:html] = {}
-    options[:html][:accept]= "image/jpeg,image/png,image/gif"
+    options[:html][:accept]= "raw" # "image/jpeg,image/png,image/gif"
     options[:html][:class] = "attachinary-input"
     model_options = {}
     model_options[:files] = @files
@@ -12,6 +12,13 @@ class AttachinaryInput
     data_attachinary = (@model_options.merge(model_options)).to_json
     options[:html][:multiple] = true unless @model_options[:single]
     options[:html]["data-attachinary"] = data_attachinary
+
+    if !options[:html][:accept] && accepted_types = @model_options[:accept]
+      accept = accepted_types.map do |type|
+        MIME::Types.type_for(type.to_s)[0]
+      end.compact
+      options[:html][:accept] = accept.join(',') unless accept.empty?
+    end
 
     options[:cloudinary] ||= {}
     options[:cloudinary][:tags] ||= []
